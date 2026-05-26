@@ -1,0 +1,168 @@
+---
+import type { SocialLinks } from '../types';
+
+type Props = {
+  links: SocialLinks;
+  /** "Follow Us" のような小見出しを表示するか */
+  withLabel?: boolean;
+  /** 配色テーマ: light=明るい背景向け / dark=濃色背景向け */
+  variant?: 'light' | 'dark';
+};
+
+const { links, withLabel = true, variant = 'light' } = Astro.props;
+
+const entries = [
+  { key: 'x' as const,         href: links.x,         label: 'X (旧 Twitter) で見る' },
+  { key: 'instagram' as const, href: links.instagram, label: 'Instagram で見る' },
+  { key: 'ameba' as const,     href: links.ameba,     label: 'Ameba ブログを読む' },
+].filter((e) => typeof e.href === 'string' && e.href.length > 0);
+---
+
+{entries.length > 0 && (
+  <div class:list={['social', `social--${variant}`]}>
+    {withLabel && (
+      <span class="social__label" aria-hidden="true">Follow Us</span>
+    )}
+    <ul class="social__list">
+      {entries.map((entry) => (
+        <li>
+          <a
+            href={entry.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class={`social__btn social__btn--${entry.key}`}
+            aria-label={entry.label}
+            title={entry.label}
+          >
+            {entry.key === 'x' && (
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.451-6.231zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644z" />
+              </svg>
+            )}
+            {entry.key === 'instagram' && (
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="5" />
+                <circle cx="12" cy="12" r="4" />
+                <circle cx="17.4" cy="6.6" r="1" fill="currentColor" stroke="none" />
+              </svg>
+            )}
+            {entry.key === 'ameba' && (
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                <mask id="ameba-article-mask">
+                  <rect width="24" height="24" fill="white" />
+                  {/* 左上：サムネイル（画像エリア） */}
+                  <rect x="6" y="6" width="5" height="4" rx="0.6" fill="black" />
+                  {/* 右上：見出し（短い行 2本） */}
+                  <rect x="12" y="6.4" width="6" height="1.3" rx="0.65" fill="black" />
+                  <rect x="12" y="8.7" width="5" height="1.3" rx="0.65" fill="black" />
+                  {/* 下段：本文ライン（長い3本＋短い〆） */}
+                  <rect x="6" y="12.5" width="12" height="1.3" rx="0.65" fill="black" />
+                  <rect x="6" y="15" width="12" height="1.3" rx="0.65" fill="black" />
+                  <rect x="6" y="17.5" width="8" height="1.3" rx="0.65" fill="black" />
+                </mask>
+                <rect
+                  x="3"
+                  y="3"
+                  width="18"
+                  height="18"
+                  rx="2.5"
+                  fill="currentColor"
+                  mask="url(#ameba-article-mask)"
+                />
+              </svg>
+            )}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
+
+<style>
+  .social {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .social__label {
+    font-family: var(--font-accent);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .social__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .social__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    transition:
+      transform 0.25s var(--easing-out),
+      background 0.2s var(--easing-out),
+      color 0.2s var(--easing-out),
+      box-shadow 0.2s var(--easing-out),
+      border-color 0.2s var(--easing-out);
+  }
+  .social__btn:hover {
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+
+  /* ---- light variant (白〜淡色背景向け) ---- */
+  .social--light .social__btn {
+    background: #fff;
+    color: var(--color-ink-2);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-xs);
+  }
+  .social--light .social__btn:hover {
+    color: var(--color-brand-700);
+    border-color: var(--color-brand-200);
+    box-shadow: 0 8px 20px rgba(19, 130, 185, 0.14);
+  }
+
+  /* ---- dark variant (濃色背景向け) ---- */
+  .social--dark .social__label {
+    color: rgba(255, 255, 255, 0.55);
+  }
+  .social--dark .social__btn {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+  }
+  .social--dark .social__btn:hover {
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  /* ブランド色のホバー強調（X/Instagram のみ。Ameba はモノクロで統一） */
+  .social__btn--instagram:hover {
+    background: linear-gradient(135deg, #f9ce34 0%, #ee2a7b 50%, #6228d7 100%);
+    color: #fff;
+    border-color: transparent;
+  }
+  .social__btn--x:hover {
+    background: #111;
+    color: #fff;
+    border-color: transparent;
+  }
+
+  @media (max-width: 520px) {
+    .social__btn { width: 40px; height: 40px; }
+  }
+</style>

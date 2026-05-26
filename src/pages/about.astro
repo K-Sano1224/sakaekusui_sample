@@ -1,0 +1,180 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { site } from '../data/site';
+
+const profile = [
+  { label: '団体名', value: `${site.name}（愛称・${site.shortName}）` },
+  { label: '発足', value: '2002年4月1日' },
+  { label: '加盟団体', value: site.affiliation },
+  { label: '在籍数', value: '48名（休団者除く） ／ 2026.05.25 現在' },
+  { label: '練習日', value: '週1回・毎週日曜日（時間は午後が多いですが毎回異なります）' },
+  { label: '練習場所', value: '栄区周辺の公共施設（毎回異なります）' },
+  { label: '主な活動', value: '定期演奏会 ／ カジュアルコンサート ／ 上郷東音楽祭 ／ アンサンブル発表会 ほか' },
+];
+
+const policies = [
+  {
+    en: 'Local Roots',
+    title: '地元ファンを増やそう！',
+    text:
+      `${site.name}（愛称・${site.shortName}）は、2002年4月1日に発足しました。もともと栄区で活動していた前身団体が栄区内で認知して頂けるようになってきたことをきっかけに、新たな名称で再スタートを切りました。以降、栄区民の団員はもちろん、関東各県から集った団員たちによって、地元の方々に支えられながら活動しています。現在、"${site.affiliation}" に加盟しています。`,
+  },
+  {
+    en: 'Communication',
+    title: 'コミュニケーションを大切に！',
+    text:
+      '「毎週の練習で団員１人１人と言葉を交わそう」——音楽とは一見関係がなさそうですが、栄区吹はこれを大切にしています。一緒に音楽をするのに「あの人はどんな人かな？」ではマズいですよね？毎週の練習で色々な人と会話をしたい——なので必然的に食事会（時には飲み会も）やレクリエーションが多いのも特徴です。',
+  },
+  {
+    en: 'Challenge',
+    title: '何事にもチャレンジ！',
+    text:
+      '栄区吹は、様々なイベントに挑戦します。その言葉の裏には「最大限の努力をする」という私たちのポリシーがあるからです。もちろん趣味なので、週1回楽しく音楽すればいいのだけれど、やるからには最大限の努力をしたい。各自「許容」は違うけれど、各自で自分の精一杯をする。そして何事にも本気でぶつかる！そんなバンドでありたいと思っています。',
+  },
+];
+---
+
+<BaseLayout title="栄区吹紹介" description={`${site.name}（${site.shortName}）の紹介、活動方針、団体プロフィール。`}>
+  <PageHeader
+    eyebrow="About Us"
+    title="栄区吹紹介"
+    lead="横浜栄区民吹奏楽団は、地域密着型のバンドです。"
+  />
+
+  <section class="section">
+    <div class="container container--narrow">
+      <p class="intro-lead">
+        {site.name}（愛称・{site.shortName}）は、2002年4月1日に発足した
+        地域密着型の吹奏楽団です。栄区民の団員はもちろん、関東各県から集った仲間たちと、
+        地元の方々に支えられながら活動しています。
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container container--narrow">
+      <span class="section-eyebrow">Our Policy</span>
+      <h2 class="section-title">私たちのポリシー</h2>
+      <div class="policies">
+        {policies.map((p) => (
+          <article class="policy card">
+            <span class="policy__en">{p.en}</span>
+            <h3 class="policy__title">{p.title}</h3>
+            <p class="policy__text">{p.text}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container container--narrow">
+      <span class="section-eyebrow">Invitation</span>
+      <h2 class="section-title">一緒に音楽をしてみませんか？</h2>
+      <p class="invite-text">
+        栄区吹のポリシーを説明しましたが、まずは見ていただくのが一番！<br />
+        ぜひ一度見学にいらしてください。そして私たちと音楽をしましょう。<br />
+        言葉では伝わりきらない想いが、お伝えできるかもしれません。
+      </p>
+      <p class="invite-actions">
+        <a href="/recruitment" class="btn btn--primary">団員募集について</a>
+        <a href="/contact" class="btn btn--outline">お問い合わせ</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container container--narrow">
+      <span class="section-eyebrow">Profile</span>
+      <h2 class="section-title">団体プロフィール</h2>
+      <dl class="profile card">
+        {profile.map((row) => (
+          <div class="profile__row">
+            <dt>{row.label}</dt>
+            <dd>{row.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .intro-lead {
+    text-align: center;
+    color: var(--color-ink-2);
+    font-size: 1.05rem;
+    line-height: 2;
+    margin: 0;
+  }
+
+  .policies {
+    display: grid;
+    gap: 24px;
+  }
+  .policy {
+    padding: 32px 36px;
+    text-align: left;
+  }
+  .policy__en {
+    display: inline-block;
+    font-family: var(--font-accent);
+    font-weight: 600;
+    color: var(--color-brand-600);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    margin-bottom: 8px;
+  }
+  .policy__title {
+    margin: 0 0 14px;
+    font-size: 1.25rem;
+    letter-spacing: 0.04em;
+  }
+  .policy__text {
+    margin: 0;
+    color: var(--color-ink-2);
+    font-size: 0.95rem;
+    line-height: 1.95;
+  }
+
+  .invite-text {
+    text-align: center;
+    color: var(--color-ink-2);
+    line-height: 2;
+    margin: 0 0 32px;
+  }
+  .invite-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    margin: 0;
+  }
+
+  .profile { padding: 8px 32px; }
+  .profile__row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 24px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .profile__row:last-child { border-bottom: none; }
+  .profile__row dt {
+    color: var(--color-muted);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding-top: 4px;
+  }
+  .profile__row dd { margin: 0; color: var(--color-ink); }
+
+  @media (max-width: 640px) {
+    .policy { padding: 24px 22px; }
+    .profile { padding: 8px 22px; }
+    .profile__row { grid-template-columns: 1fr; gap: 4px; padding: 14px 0; }
+  }
+</style>

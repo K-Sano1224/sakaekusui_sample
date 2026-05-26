@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import ConcertList from '../components/ConcertList.astro';
+import ConcertArchive from '../components/ConcertArchive.astro';
+import { getConcerts, splitConcertsByDate, UPCOMING_CONCERTS_EMPTY } from '../data/concerts';
+
+const allConcerts = await getConcerts();
+const { upcoming, past } = splitConcertsByDate(allConcerts);
+---
+
+<BaseLayout
+  title="演奏会情報"
+  description="開催予定の演奏会・過去の演奏会情報をご案内します。"
+>
+  <PageHeader
+    eyebrow="Concerts"
+    title="演奏会情報"
+    lead="開催予定の演奏会と、過去の演奏会の記録をご紹介します。"
+  />
+
+  <section class="section">
+    <div class="container">
+      <span class="section-eyebrow">Upcoming</span>
+      <h2 class="section-title">開催予定の演奏会</h2>
+      <ConcertList concerts={upcoming} full empty={UPCOMING_CONCERTS_EMPTY} />
+    </div>
+  </section>
+
+  {past.length > 0 && (
+    <section class="section section--alt">
+      <div class="container">
+        <span class="section-eyebrow">Archive</span>
+        <h2 class="section-title">過去の演奏会</h2>
+        <ConcertArchive concerts={past} initial={4} step={4} />
+      </div>
+    </section>
+  )}
+</BaseLayout>

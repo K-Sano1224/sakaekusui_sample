@@ -1,0 +1,219 @@
+---
+import { site } from '../data/site';
+
+const year = new Date().getFullYear();
+
+const linkGroups = [
+  {
+    title: '当団について',
+    items: [
+      { href: '/about', label: '栄区吹紹介' },
+      { href: '/activities', label: '活動予定' },
+    ],
+  },
+  {
+    title: 'お客様へ',
+    items: [
+      { href: '/concerts', label: '演奏会情報' },
+      { href: '/subscribe', label: '演奏会の案内通知受付' },
+    ],
+  },
+  {
+    title: '参加・お問い合わせ',
+    items: [
+      { href: '/recruitment', label: '団員募集中' },
+      { href: '/contact', label: 'お問い合わせ' },
+    ],
+  },
+];
+---
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <div class="footer__brand">
+      <p class="footer__name">
+        <span class="footer__mark" aria-hidden="true">♪</span>
+        {site.name}
+      </p>
+      <p class="footer__tagline">{site.tagline}</p>
+      <p class="footer__email">
+        <a href={`mailto:${site.email}`}>{site.email}</a>
+      </p>
+    </div>
+
+    <div class="footer__columns">
+      {linkGroups.map((group) => (
+        <div class="footer__col">
+          <h4>{group.title}</h4>
+          <ul>
+            {group.items.map((item) => (
+              <li><a href={item.href}>{item.label}</a></li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div class="footer__bottom">
+    <div class="container footer__bottom-inner">
+      <div class="footer__bottom-left">
+        <small>© {year} {site.name}. All rights reserved.</small>
+        <span class="footer__sep" aria-hidden="true">|</span>
+        <a href="/privacy" class="footer__policy">プライバシーポリシー</a>
+      </div>
+      <small class="footer__since">Since {site.founded}</small>
+    </div>
+  </div>
+</footer>
+
+<style>
+  /* Dark footer — readable, warm, not heavy */
+  .footer {
+    background: linear-gradient(180deg, #1c2839 0%, #131c2a 100%);
+    color: rgba(255, 255, 255, 0.85);
+    border-top: 4px solid var(--color-brand-500);
+  }
+
+  .footer__inner {
+    display: grid;
+    grid-template-columns: 1.2fr 2fr;
+    gap: 64px;
+    padding-block: 72px 56px;
+  }
+
+  /* Brand block */
+  .footer__name {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-display);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin: 0 0 14px;
+    letter-spacing: 0.04em;
+  }
+  .footer__mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--color-brand-500);
+    color: var(--color-warm-300);
+    font-size: 1.1rem;
+    box-shadow: 0 6px 16px rgba(19, 130, 185, 0.35);
+  }
+  .footer__tagline {
+    font-size: 0.92rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0 0 22px;
+    line-height: 1.9;
+  }
+  .footer__email a {
+    color: var(--color-brand-200);
+    font-family: var(--font-accent);
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding-bottom: 2px;
+    border-bottom: 1.5px dotted rgba(164, 213, 233, 0.45);
+  }
+  .footer__email a:hover {
+    color: #fff;
+    border-color: var(--color-warm-300);
+  }
+
+  /* Link columns */
+  .footer__columns {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 36px;
+  }
+  .footer h4 {
+    color: #fff;
+    font-family: var(--font-accent);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    margin: 0 0 18px;
+    font-weight: 700;
+  }
+  .footer ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .footer__columns a {
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.92rem;
+    transition: color 0.2s var(--easing-out), padding-left 0.2s var(--easing-out);
+    display: inline-block;
+  }
+  .footer__columns a:hover {
+    color: var(--color-warm-300);
+    text-decoration: none;
+    padding-left: 4px;
+  }
+
+  /* Bottom bar */
+  .footer__bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-block: 20px;
+    background: rgba(0, 0, 0, 0.18);
+  }
+  .footer__bottom-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+  }
+  .footer__bottom-left {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .footer__sep {
+    color: rgba(255, 255, 255, 0.25);
+  }
+  .footer__policy {
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.8rem;
+    transition: color 0.2s var(--easing-out);
+  }
+  .footer__policy:hover {
+    color: var(--color-warm-300);
+    text-decoration: none;
+  }
+  .footer__since {
+    font-family: var(--font-accent);
+    font-weight: 600;
+    font-size: 0.88rem;
+    letter-spacing: 0.12em;
+    color: var(--color-warm-300);
+  }
+
+  @media (max-width: 880px) {
+    .footer__inner {
+      grid-template-columns: 1fr;
+      gap: 48px;
+      padding-block: 60px 44px;
+    }
+    .footer__columns {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+    }
+  }
+  @media (max-width: 480px) {
+    .footer__columns { grid-template-columns: 1fr; gap: 22px; }
+    .footer__bottom-inner { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .footer__bottom-left { gap: 8px; }
+  }
+</style>

@@ -1,0 +1,235 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+---
+
+<BaseLayout
+  title="演奏会の案内通知受付"
+  description="栄区吹の定期演奏会・カジュアルコンサートの開催情報をいち早くメールでお届けします。"
+>
+  <PageHeader
+    eyebrow="Stay Connected"
+    title="演奏会の案内通知 受付"
+    lead="吹奏楽が紡ぐ心躍るひとときをお届けします！"
+  />
+
+  <section class="section">
+    <div class="container container--narrow">
+      <p class="lead-text">
+        私たち栄区吹では、皆さまに音楽の魅力を楽しんでいただけるよう、
+        年に数回「定期演奏会」や「カジュアルコンサート」を自主開催しています。<br />
+        このフォームにご登録いただくと、演奏会の開催情報をいち早くメールでお届けいたします。<br />
+        音楽を通じて新たな感動と出会いをお楽しみいただける機会をぜひお見逃しなく！
+      </p>
+
+      <ul class="benefit card">
+        <li>定期演奏会・カジュアルコンサートの開催情報を事前にお知らせ</li>
+        <li>演奏会の見どころ・テーマなどのご案内</li>
+        <li>地域イベント出演など、当団の出演情報</li>
+      </ul>
+
+      <form class="form card" name="subscribe" method="post" action="#" data-subscribe-form>
+        <div class="form__row">
+          <label for="sub-name">お名前 <span class="required">必須</span></label>
+          <input id="sub-name" name="name" type="text" required autocomplete="name" />
+        </div>
+
+        <div class="form__row">
+          <label for="sub-email">メールアドレス <span class="required">必須</span></label>
+          <input id="sub-email" name="email" type="email" required autocomplete="email" />
+        </div>
+
+        <fieldset class="form__fieldset">
+          <legend>受け取りたい情報（複数選択可）</legend>
+          <label><input type="checkbox" name="topics" value="regular" checked /> 定期演奏会のご案内</label>
+          <label><input type="checkbox" name="topics" value="family" checked /> カジュアルコンサート</label>
+          <label><input type="checkbox" name="topics" value="event" /> 地域イベント出演情報</label>
+          <label><input type="checkbox" name="topics" value="other" /> その他のお知らせ</label>
+        </fieldset>
+
+        <div class="form__row form__row--check">
+          <label>
+            <input type="checkbox" name="privacy" required />
+            <span>個人情報の取り扱いに同意します</span>
+          </label>
+        </div>
+
+        <div class="form__actions">
+          <button type="submit" class="btn btn--primary">通知を受け取る</button>
+        </div>
+
+        <p class="form__note" data-form-note hidden>
+          ※ 現在この登録フォームはダミーです。実際の登録機能は後ほど実装します。
+        </p>
+      </form>
+
+      <div class="meta">
+        <h2>注意事項</h2>
+        <ul>
+          <li>ご登録いただいた情報は、演奏会のご案内以外の目的では使用いたしません。</li>
+          <li>いつでも配信停止が可能です。お問い合わせからご連絡ください。</li>
+          <li>入力内容はお間違えの無いよう、必ずチェックをお願いいたします。</li>
+          <li>既にご登録済みの方は再登録は不要です。</li>
+          <li>登録完了時のご連絡は行われません、ご了承ください。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-subscribe-form]');
+  const note = document.querySelector<HTMLElement>('[data-form-note]');
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (note) {
+      note.hidden = false;
+      note.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
+</script>
+
+<style>
+  .benefit {
+    list-style: none;
+    padding: 24px 32px;
+    margin: 0 0 32px;
+    background: var(--color-brand-50);
+    border-left: 3px solid var(--color-brand-500);
+    color: var(--color-brand-900);
+  }
+  .benefit li {
+    position: relative;
+    padding-left: 22px;
+    margin-bottom: 8px;
+  }
+  .benefit li:last-child { margin-bottom: 0; }
+  .benefit li::before {
+    content: '♪';
+    position: absolute;
+    left: 0;
+    color: var(--color-brand-500);
+    font-weight: 700;
+  }
+
+  .form { padding: 40px; }
+  .form__row { margin-bottom: 22px; }
+  .form__row label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--color-ink);
+    font-size: 0.9rem;
+  }
+  .form__row input[type='text'],
+  .form__row input[type='email'] {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: 1rem;
+    background: #fff;
+    color: var(--color-ink);
+    transition: border-color 0.2s var(--easing-out), box-shadow 0.2s var(--easing-out);
+  }
+  .form__row input:focus {
+    outline: none;
+    border-color: var(--color-brand-500);
+    box-shadow: 0 0 0 4px rgba(19, 130, 185, 0.12);
+  }
+
+  .form__fieldset {
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    padding: 18px 22px;
+    margin: 0 0 22px;
+  }
+  .form__fieldset legend {
+    padding: 0 8px;
+    font-weight: 600;
+    color: var(--color-ink);
+    font-size: 0.9rem;
+  }
+  .form__fieldset label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0;
+    font-weight: 500;
+    color: var(--color-ink-2);
+  }
+  .form__fieldset input { accent-color: var(--color-brand-500); }
+
+  .form__row--check label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0;
+    font-weight: 500;
+    color: var(--color-ink-2);
+  }
+  .form__row--check input { transform: scale(1.15); accent-color: var(--color-brand-500); }
+
+  .required {
+    display: inline-block;
+    margin-left: 8px;
+    background: var(--color-danger);
+    color: #fff;
+    border-radius: var(--radius-sm);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    padding: 2px 8px;
+    font-weight: 600;
+    vertical-align: middle;
+  }
+
+  .form__actions {
+    text-align: center;
+    margin-top: 32px;
+  }
+  .form__actions .btn { min-width: 200px; }
+
+  .form__note {
+    margin-top: 18px;
+    padding: 16px 18px;
+    background: var(--color-brand-50);
+    border-left: 3px solid var(--color-brand-500);
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    color: var(--color-brand-900);
+  }
+
+  .meta {
+    margin-top: 48px;
+    padding: 24px 28px;
+    background: var(--color-bg-alt);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-line);
+  }
+  .meta h2 {
+    margin: 0 0 12px;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+  }
+  .meta ul {
+    margin: 0;
+    padding-left: 1.2em;
+    color: var(--color-muted);
+    font-size: 0.88rem;
+  }
+  .meta li { margin-bottom: 4px; }
+
+  .lead-text {
+    text-align: center;
+    color: var(--color-ink-2);
+    margin-bottom: 32px;
+    line-height: 2;
+  }
+
+  @media (max-width: 560px) {
+    .form { padding: 28px 22px; }
+    .benefit { padding: 22px 24px; }
+  }
+</style>

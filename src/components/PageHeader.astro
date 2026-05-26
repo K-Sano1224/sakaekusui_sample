@@ -1,0 +1,95 @@
+---
+type Props = {
+  title: string;
+  eyebrow?: string;
+  lead?: string;
+};
+
+const { title, eyebrow, lead } = Astro.props;
+---
+
+<section class="page-header">
+  <div class="page-header__deco page-header__deco--1" aria-hidden="true"></div>
+  <div class="page-header__deco page-header__deco--2" aria-hidden="true"></div>
+  <div class="container">
+    {eyebrow && (
+      <span class="page-header__eyebrow">
+        <span class="page-header__eyebrow-mark" aria-hidden="true">♪</span>
+        {eyebrow}
+      </span>
+    )}
+    <h1 class="page-header__title">{title}</h1>
+    {lead && <p class="page-header__lead">{lead}</p>}
+  </div>
+</section>
+
+<style>
+  .page-header {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, #ffffff 0%, var(--color-bg-soft) 100%);
+    border-bottom: 1px solid var(--color-line);
+    padding-block: clamp(64px, 10vw, 104px) clamp(48px, 8vw, 80px);
+    text-align: center;
+  }
+  .page-header__deco {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(50px);
+    pointer-events: none;
+  }
+  .page-header__deco--1 {
+    width: 300px; height: 300px;
+    background: rgba(19, 130, 185, 0.10);
+    top: -100px; left: -60px;
+  }
+  .page-header__deco--2 {
+    width: 280px; height: 280px;
+    background: rgba(251, 191, 36, 0.14);
+    bottom: -120px; right: -60px;
+  }
+  .page-header > .container { position: relative; z-index: 1; }
+
+  .page-header__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-accent);
+    font-weight: 500;
+    color: var(--color-brand-600);
+    background: #fff;
+    border: 1px solid var(--color-brand-100);
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    margin-bottom: 18px;
+  }
+  .page-header__eyebrow-mark { color: var(--color-warm-500); }
+
+  .page-header__title {
+    margin: 0 0 14px;
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.7rem, 3.4vw, 2.4rem);
+    letter-spacing: 0.06em;
+  }
+  .page-header__title::after {
+    content: '';
+    display: block;
+    width: 48px;
+    height: 4px;
+    background: var(--color-warm-300);
+    margin: 16px auto 0;
+    border-radius: var(--radius-pill);
+  }
+  .page-header__lead {
+    margin: 0 auto;
+    max-width: 680px;
+    color: var(--color-ink-2);
+    font-size: 1rem;
+    line-height: 1.9;
+  }
+</style>

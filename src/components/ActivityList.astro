@@ -1,0 +1,41 @@
+---
+import type { Activity } from '../types';
+import ActivityItem from './ActivityItem.astro';
+
+type Props = {
+  activities: Activity[];
+  showFullDate?: boolean;
+  empty?: string;
+};
+
+const { activities, showFullDate = false, empty = '活動予定は準備中です。' } = Astro.props;
+
+const sorted = [...activities].sort(
+  (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+);
+---
+
+{sorted.length === 0 ? (
+  <p class="activity-list__empty">{empty}</p>
+) : (
+  <ul class="card activity-list">
+    {sorted.map((a) => <ActivityItem activity={a} showFullDate={showFullDate} />)}
+  </ul>
+)}
+
+<style>
+  .activity-list {
+    padding: 8px 32px;
+    margin: 0;
+    list-style: none;
+  }
+  .activity-list__empty {
+    text-align: center;
+    color: var(--color-muted);
+    padding: 48px 0;
+    font-size: 0.95rem;
+  }
+  @media (max-width: 640px) {
+    .activity-list { padding: 8px 22px; }
+  }
+</style>

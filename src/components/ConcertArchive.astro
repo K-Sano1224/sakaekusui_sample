@@ -1,0 +1,170 @@
+---
+import type { Concert } from '../types';
+import ConcertCard from './ConcertCard.astro';
+
+type Props = {
+  concerts: Concert[];
+  /** 初期表示件数 */
+  initial?: number;
+  /** 「もっと見る」1回で追加表示する件数 */
+  step?: number;
+  empty?: string;
+};
+
+const {
+  concerts,
+  initial = 4,
+  step = 4,
+  empty = '過去の演奏会記録はありません。',
+} = Astro.props;
+
+const total = concerts.length;
+const initialVisible = Math.min(initial, total);
+---
+
+{total === 0 ? (
+  <p class="archive__empty">{empty}</p>
+) : (
+  <div
+    class="archive"
+    data-archive
+    data-step={step}
+    data-visible={initialVisible}
+    data-total={total}
+  >
+    <div class="archive__list">
+      {concerts.map((c, i) => (
+        <div class="archive__item" data-index={i} hidden={i >= initialVisible}>
+          <ConcertCard concert={c} compact />
+        </div>
+      ))}
+    </div>
+
+    <div class="archive__footer">
+      <p class="archive__count" data-count>
+        <span data-count-current>{initialVisible}</span>
+        <span class="archive__count-sep">/</span>
+        <span>{total}</span>
+        <span class="archive__count-label">件 表示中</span>
+      </p>
+
+      {initialVisible < total && (
+        <button type="button" class="btn btn--outline archive__more" data-archive-more>
+          もっと見る
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+      )}
+    </div>
+  </div>
+)}
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-archive]').forEach((archive) => {
+    const step = Number(archive.dataset.step ?? '4');
+    const total = Number(archive.dataset.total ?? '0');
+    const moreBtn = archive.querySelector<HTMLButtonElement>('[data-archive-more]');
+    const counter = archive.querySelector<HTMLElement>('[data-count-current]');
+    const items = archive.querySelectorAll<HTMLElement>('.archive__item');
+
+    if (!moreBtn) return;
+
+    moreBtn.addEventListener('click', () => {
+      const currentVisible = Number(archive.dataset.visible ?? '0');
+      const nextVisible = Math.min(currentVisible + step, total);
+
+      // 新しく表示されるアイテムにフェードインさせる
+      let firstRevealed: HTMLElement | null = null;
+      for (let i = currentVisible; i < nextVisible; i++) {
+        const item = items[i];
+        if (!item) continue;
+        item.hidden = false;
+        item.classList.add('is-revealed');
+        if (!firstRevealed) firstRevealed = item;
+      }
+
+      archive.dataset.visible = String(nextVisible);
+      if (counter) counter.textContent = String(nextVisible);
+
+      if (nextVisible >= total) {
+        moreBtn.remove();
+      }
+
+      // 新しく表示された最初のアイテムへスムーズスクロール
+      if (firstRevealed) {
+        const top = firstRevealed.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top, behavior: 'smooth' });
+        firstRevealed.querySelector('article')?.focus?.();
+      }
+    });
+  });
+</script>
+
+<style>
+  .archive { display: block; }
+
+  .archive__list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  @media (min-width: 880px) {
+    .archive__list {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+    }
+  }
+
+  .archive__item.is-revealed {
+    animation: archive-reveal 0.5s var(--easing-out) both;
+  }
+  @keyframes archive-reveal {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .archive__footer {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+  .archive__count {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: 0.88rem;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    font-feature-settings: 'tnum' 1;
+  }
+  .archive__count > span:first-child {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--color-brand-700);
+    font-size: 1.05rem;
+  }
+  .archive__count-sep {
+    color: var(--color-muted-2);
+  }
+  .archive__count-label {
+    margin-left: 4px;
+    color: var(--color-muted);
+    font-size: 0.82rem;
+  }
+  .archive__more {
+    min-width: 200px;
+  }
+
+  .archive__empty {
+    text-align: center;
+    color: var(--color-muted);
+    padding: 48px 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .archive__item.is-revealed { animation: none; }
+  }
+</style>

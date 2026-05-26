@@ -1,0 +1,331 @@
+---
+import type { Recruitment, RecruitmentPart } from '../types';
+import { formatDateJa } from '../lib/format';
+
+type Props = {
+  recruitment: Recruitment;
+  compact?: boolean;
+};
+
+const { recruitment, compact = false } = Astro.props;
+
+const statusLabel: Record<RecruitmentPart['status'], string> = {
+  open: '募集中',
+  few: '若干名',
+  urgent: '急募！',
+  closed: '募集停止',
+};
+const statusClass: Record<RecruitmentPart['status'], string> = {
+  open: 'badge--success',
+  few: 'badge--warm',
+  urgent: 'badge--peach',
+  closed: 'badge--muted',
+};
+const rowClass: Record<RecruitmentPart['status'], string> = {
+  open: 'parts__row--open',
+  few: 'parts__row--few',
+  urgent: 'parts__row--urgent',
+  closed: 'parts__row--closed',
+};
+
+const overallLabel: Record<Recruitment['overallStatus'], string> = {
+  open: '全パート募集中',
+  partial: '一部パート募集中',
+  closed: '現在募集停止中',
+};
+---
+
+<section class="card recruitment">
+  <header class="recruitment__head">
+    <div class="recruitment__title-block">
+      <p class="recruitment__eyebrow">Member Recruitment</p>
+      <p class="recruitment__status">{overallLabel[recruitment.overallStatus]}</p>
+      {!compact && <p class="recruitment__message">{recruitment.message}</p>}
+    </div>
+    <p class="recruitment__updated">
+      <span>Updated</span>
+      <time datetime={recruitment.updatedAt}>{formatDateJa(recruitment.updatedAt)}</time>
+    </p>
+  </header>
+
+  <div class="parts-wrap">
+    <table class="parts">
+      <thead>
+        <tr>
+          <th scope="col" class="parts__th parts__th--name">パート名</th>
+          <th scope="col" class="parts__th parts__th--members">在籍人数</th>
+          <th scope="col" class="parts__th parts__th--status">募集状況</th>
+        </tr>
+      </thead>
+      <tbody>
+        {recruitment.parts.map((p) => (
+          <tr class={`parts__row ${rowClass[p.status]}`}>
+            <td class="parts__td parts__td--name" data-label="パート名">{p.name}</td>
+            <td class="parts__td parts__td--members" data-label="在籍人数">
+              {typeof p.members === 'number' ? (
+                <><span class="parts__num">{p.members}</span><span class="parts__unit">名</span></>
+              ) : (
+                <span class="parts__dash" aria-label="不明">—</span>
+              )}
+            </td>
+            <td class="parts__td parts__td--status" data-label="募集状況">
+              <span class={`badge ${statusClass[p.status]}`}>{statusLabel[p.status]}</span>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  {!compact && recruitment.trialInfo && (
+    <p class="recruitment__trial">
+      <span class="recruitment__trial-label">Trial</span>
+      {recruitment.trialInfo}
+    </p>
+  )}
+</section>
+
+<style>
+  .recruitment { padding: 36px 36px 32px; }
+
+  /* ------- Head ------- */
+  .recruitment__head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .recruitment__eyebrow {
+    font-family: var(--font-accent);
+    font-weight: 500;
+    color: var(--color-brand-600);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    margin: 0 0 6px;
+  }
+  .recruitment__status {
+    font-family: var(--font-display);
+    font-weight: 700;
+    margin: 0 0 8px;
+    font-size: 1.3rem;
+    color: var(--color-ink);
+    letter-spacing: 0.04em;
+  }
+  .recruitment__message {
+    margin: 0;
+    color: var(--color-ink-2);
+    font-size: 0.95rem;
+    max-width: 60ch;
+  }
+  .recruitment__updated {
+    margin: 0;
+    font-size: 0.78rem;
+    color: var(--color-muted);
+    text-align: right;
+  }
+  .recruitment__updated span {
+    display: block;
+    font-family: var(--font-accent);
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  /* =============================================================
+   * Parts Table
+   *   PC : 中央寄せ・最大幅制限・角丸枠付きの 3 列テーブル
+   *        パート名は左、在籍人数 / 募集状況は中央
+   *   SP : スタックカード
+   * ============================================================= */
+  .parts-wrap {
+    max-width: 720px;
+    margin: 0 auto 24px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg);
+    overflow: hidden;
+    box-shadow: var(--shadow-xs);
+  }
+  .parts {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 0;
+    table-layout: fixed;
+  }
+
+  /* ----- header ----- */
+  .parts thead { background: var(--color-bg-alt); }
+  .parts__th {
+    font-family: var(--font-accent);
+    font-weight: 600;
+    font-size: 0.76rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-brand-700);
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .parts__th--name    { width: 50%; text-align: left;   }
+  .parts__th--members { width: 22%; text-align: center; }
+  .parts__th--status  { width: 28%; text-align: center; }
+
+  /* 列の境界（ヘッダ） */
+  .parts__th + .parts__th {
+    border-left: 1px dashed var(--color-line);
+  }
+
+  /* ----- body row ----- */
+  .parts__row {
+    transition: background 0.2s var(--easing-out);
+  }
+  /* ゼブラ */
+  .parts__row:nth-child(even) { background: var(--color-bg-alt); }
+  .parts__row:hover           { background: var(--color-brand-50); }
+  .parts__row--urgent,
+  .parts__row--urgent:nth-child(even) { background: var(--color-warm-50); }
+  .parts__row--urgent:hover           { background: var(--color-warm-100); }
+  .parts__row--closed { opacity: 0.7; }
+
+  /* ----- cells ----- */
+  .parts__td {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--color-line);
+    font-size: 0.95rem;
+    vertical-align: middle;
+  }
+  .parts__row:last-child .parts__td { border-bottom: none; }
+  /* 列の境界（本文） */
+  .parts__td + .parts__td {
+    border-left: 1px dashed var(--color-line);
+  }
+
+  .parts__td--name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--color-ink);
+    letter-spacing: 0.02em;
+    text-align: left;
+  }
+  .parts__td--members {
+    text-align: center;
+    font-feature-settings: 'tnum' 1;
+    color: var(--color-ink);
+  }
+  .parts__num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.15rem;
+  }
+  .parts__unit {
+    margin-left: 4px;
+    font-size: 0.85rem;
+    color: var(--color-muted);
+  }
+  .parts__dash { color: var(--color-muted-2); }
+
+  .parts__td--status { text-align: center; }
+
+  /* ------- Trial info ------- */
+  .recruitment__trial {
+    margin: 0;
+    padding: 18px 20px;
+    background: var(--color-brand-50);
+    border-radius: var(--radius-md);
+    border-left: 3px solid var(--color-brand-500);
+    font-size: 0.92rem;
+    color: var(--color-brand-700);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: baseline;
+  }
+  .recruitment__trial-label {
+    font-family: var(--font-accent);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-size: 0.74rem;
+    color: var(--color-brand-600);
+    font-weight: 600;
+  }
+
+  /* =============================================================
+   * Mobile — stacked card style
+   * ============================================================= */
+  @media (max-width: 640px) {
+    .recruitment { padding: 24px 22px; }
+    .recruitment__head { flex-direction: column; align-items: flex-start; }
+    .recruitment__updated { text-align: left; }
+
+    /* PCの外枠は不要に */
+    .parts-wrap {
+      border: none;
+      background: transparent;
+      box-shadow: none;
+      overflow: visible;
+      max-width: none;
+    }
+
+    .parts thead { display: none; }
+    .parts, .parts tbody, .parts__row, .parts__td { display: block; width: 100%; }
+
+    .parts__row {
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      background: #fff !important;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-template-areas:
+        'name   status'
+        'members status';
+      gap: 4px 12px;
+      align-items: center;
+    }
+    .parts__row--urgent {
+      background: var(--color-warm-50) !important;
+      border-color: var(--color-warm-200);
+    }
+    .parts__row:last-child { margin-bottom: 0; }
+
+    .parts__td {
+      padding: 0;
+      border-bottom: none;
+      font-size: 0.92rem;
+    }
+    .parts__td + .parts__td { border-left: none; }
+
+    .parts__td--name {
+      grid-area: name;
+      text-align: left;
+    }
+    .parts__td--members {
+      grid-area: members;
+      text-align: left;
+      color: var(--color-muted);
+      font-size: 0.85rem;
+    }
+    .parts__td--members::before {
+      content: '在籍 ';
+      font-family: var(--font-accent);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-muted-2);
+      margin-right: 4px;
+    }
+    .parts__num { font-size: 0.95rem; }
+    .parts__unit { font-size: 0.8rem; }
+    .parts__td--status {
+      grid-area: status;
+      text-align: right;
+    }
+  }
+</style>

@@ -1,0 +1,259 @@
+---
+import { site } from '../data/site';
+
+const nav = [
+  { href: '/', label: 'ホーム' },
+  { href: '/about', label: '栄区吹紹介' },
+  { href: '/concerts', label: '演奏会情報' },
+  { href: '/recruitment', label: '団員募集中' },
+  { href: '/activities', label: '活動予定' },
+  { href: '/contact', label: 'お問い合わせ' },
+];
+
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<header class="header" data-header>
+  <div class="container header__inner">
+    <a href="/" class="header__brand" aria-label={`${site.name} トップへ`}>
+      <img
+        src="/logo.jpg"
+        alt={`${site.name} ${site.enName}`}
+        width="796"
+        height="193"
+        class="header__logo"
+        decoding="async"
+        fetchpriority="high"
+      />
+    </a>
+
+    <button
+      type="button"
+      class="header__toggle"
+      aria-label="メニューを開く"
+      aria-expanded="false"
+      aria-controls="primary-nav"
+      data-nav-toggle
+    >
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav id="primary-nav" class="header__nav" data-nav>
+      <ul>
+        {nav.map((item) => {
+          const itemPath = item.href.replace(/\/$/, '') || '/';
+          const isActive = pathname === itemPath;
+          return (
+            <li>
+              <a
+                href={item.href}
+                class={isActive ? 'is-active' : ''}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          );
+        })}
+        <li class="header__cta">
+          <a href="/subscribe" class="btn btn--primary btn--sm">案内通知を受け取る</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+  const nav = document.querySelector<HTMLElement>('[data-nav]');
+
+  if (toggle && nav) {
+    toggle.addEventListener('click', () => {
+      const open = nav.classList.toggle('is-open');
+      toggle.classList.toggle('is-open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'メニューを閉じる' : 'メニューを開く');
+    });
+
+    nav.querySelectorAll('a').forEach((a) => {
+      a.addEventListener('click', () => {
+        nav.classList.remove('is-open');
+        toggle.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+
+  if (header) {
+    const onScroll = () => {
+      header.classList.toggle('is-scrolled', window.scrollY > 8);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+</script>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+    border-bottom: 1px solid transparent;
+    transition: background 0.2s var(--easing-out), border-color 0.2s var(--easing-out),
+      box-shadow 0.2s var(--easing-out);
+  }
+  .header.is-scrolled {
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom-color: var(--color-line);
+    box-shadow: var(--shadow-xs);
+  }
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: var(--header-h);
+    gap: 16px;
+  }
+  .header__brand {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    transition: opacity 0.2s var(--easing-out);
+  }
+  .header__brand:hover { opacity: 0.8; text-decoration: none; }
+  .header__logo {
+    display: block;
+    height: 80px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+  }
+  /* ナビと並存する狭めPC帯域ではロゴも一段小さく */
+  @media (max-width: 1100px) {
+    .header__logo { height: 64px; }
+  }
+  @media (max-width: 1024px) {
+    .header__logo { height: 56px; }
+  }
+  @media (max-width: 420px) {
+    .header { --header-h: 60px; }
+    .header__logo { height: 44px; }
+  }
+
+  .header__nav ul {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-wrap: nowrap;
+  }
+  .header__nav a {
+    position: relative;
+    display: inline-block;
+    padding: 10px 12px;
+    color: var(--color-ink-2);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .header__nav a::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    left: 14px;
+    right: 14px;
+    height: 3px;
+    background: var(--color-warm-300);
+    border-radius: var(--radius-pill);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.25s var(--easing-out);
+  }
+  .header__nav a:hover { color: var(--color-brand-700); }
+  .header__nav a:hover::after,
+  .header__nav a.is-active::after {
+    transform: scaleX(1);
+  }
+  .header__nav a.is-active { color: var(--color-brand-700); }
+  .header__cta { margin-left: 8px; }
+  .header__cta .btn { white-space: nowrap; }
+  /* .header__nav a の color が btn--primary を上書きしてしまうため明示的に白へ */
+  .header__nav .header__cta .btn--primary,
+  .header__nav .header__cta .btn--primary:hover,
+  .header__nav .header__cta .btn--primary:focus,
+  .header__nav .header__cta .btn--primary:visited {
+    color: #fff;
+  }
+
+  /* ナビが詰まる帯域：1100px 以下ではフォント・余白を一段詰める */
+  @media (max-width: 1100px) {
+    .header__nav a { padding: 8px 8px; font-size: 0.85rem; }
+    .header__nav a::after { left: 10px; right: 10px; }
+    .header__cta { margin-left: 4px; }
+    .header__cta .btn { padding: 9px 16px; font-size: 0.82rem; }
+  }
+
+  .header__toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    padding: 0 10px;
+  }
+  .header__toggle span {
+    display: block;
+    height: 2px;
+    background: var(--color-ink);
+    border-radius: 2px;
+    transition: transform 0.25s var(--easing-out), opacity 0.2s var(--easing-out);
+  }
+  .header__toggle.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .header__toggle.is-open span:nth-child(2) { opacity: 0; }
+  .header__toggle.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  @media (max-width: 1024px) {
+    .header { --header-h: 72px; }
+    .header__toggle { display: flex; }
+    .header__nav {
+      position: absolute;
+      top: var(--header-h);
+      left: 0;
+      right: 0;
+      background: #fff;
+      border-bottom: 1px solid var(--color-line);
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s var(--easing-out);
+    }
+    .header__nav.is-open { max-height: 90vh; }
+    .header__nav ul {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 12px 24px 24px;
+      gap: 0;
+    }
+    .header__nav a {
+      display: block;
+      padding: 16px 4px;
+      border-bottom: 1px solid var(--color-line-2);
+      font-size: 1rem;
+    }
+    .header__nav a::after { display: none; }
+    .header__cta { margin: 16px 0 0; padding-top: 16px; }
+    .header__cta .btn { width: 100%; }
+  }
+</style>

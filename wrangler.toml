@@ -1,0 +1,5 @@
+# Cloudflare Pages 用設定
+# https://developers.cloudflare.com/pages/
+name = "sakaekusui"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "./dist"

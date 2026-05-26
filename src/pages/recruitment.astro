@@ -1,0 +1,239 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import RecruitmentStatus from '../components/RecruitmentStatus.astro';
+import { recruitment } from '../data/recruitment';
+
+const appeals = [
+  {
+    title: '多彩なプログラムで幅広い音楽を楽しめます！',
+    text:
+      '当団では、邦人作曲家や吹奏楽オリジナル作品、クラシックの編曲、映画音楽やポップスなど、多彩なジャンルの楽曲を取り上げています。演奏会ごとにテーマを設けることで、幅広い世代や音楽の好みに応じたプログラムを工夫し、来場者の皆さまに新たな感動をお届けしています。',
+  },
+  {
+    title: '毎週、フル編成の打楽器を使用した合奏をします！',
+    text:
+      'ティンパニ、マリンバ、ビブラフォン、チャイムなど、フル編成の打楽器をすべて団所有しています。練習のたびにこれらの打楽器を活用した全体合奏を行うことで、より本格的な演奏を目指しています。打楽器パートの方も、安心してご参加いただけます。',
+  },
+  {
+    title: 'いつでも仲間を大募集中です！',
+    text:
+      '栄区吹、という名称ではありますが、活動拠点が栄区であるだけで全国どこからでもご入団いただけます。特定の学校や団体のOBで構成されているわけではなく、「音楽を楽しみたい」という純粋な想いを持ったメンバーが集まっています。一緒に吹奏楽を楽しみたい方なら大歓迎です。',
+  },
+];
+
+const qualifications = [
+  '担当楽器の楽譜が読め、曲演奏が可能で合奏に参加できる方',
+  '楽器をお持ちの方（打楽器は団所有あります）',
+  '毎週の練習に、意欲的にコンスタントに参加できる方',
+  '演奏だけでなく、演奏会の準備などバンドを一緒に盛り上げたいという方',
+  '高校生の方は、保護者の承諾を得られる方に限ります（パートで高校生の受け入れには制限があります。お問い合わせください）',
+];
+
+const flow = [
+  { step: 1, title: 'お問い合わせ', text: 'お問い合わせフォームから、見学希望の旨をご連絡ください。' },
+  { step: 2, title: '日程調整', text: '練習スケジュールに合わせて、見学日をご案内します。' },
+  { step: 3, title: '見学・体験', text: '練習の雰囲気をより感じていただけるよう、楽器持参で合奏体験をお勧めしています。見学のみのご希望も大歓迎です。' },
+  { step: 4, title: '入団手続き', text: '入団を希望される場合は、所定の手続きにてご入団いただけます。' },
+];
+---
+
+<BaseLayout
+  title="団員募集中"
+  description="栄区吹では一緒に音楽を楽しむ仲間を募集しています。募集状況・入団資格・団費のご案内。"
+>
+  <PageHeader
+    eyebrow="Members Wanted"
+    title="団員募集中"
+    lead="栄区吹では仲間を募集しています！"
+  />
+
+  <section class="section">
+    <div class="container container--narrow">
+      <div class="appeals">
+        {appeals.map((a) => (
+          <article class="appeal card">
+            <h3 class="appeal__title">{a.title}</h3>
+            <p class="appeal__text">{a.text}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container container--narrow">
+      <span class="section-eyebrow">Current Status</span>
+      <h2 class="section-title">募集状況</h2>
+      <RecruitmentStatus recruitment={recruitment} />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container container--narrow">
+      <h2 class="block-title">練習場所・日程</h2>
+      <ul class="bullet">
+        <li>週１回、<strong>毎週日曜日</strong>（時間は午後が多いですが、毎回異なります）</li>
+        <li>栄区周辺の公共施設にて（毎回異なります）</li>
+      </ul>
+
+      <h2 class="block-title">入団資格</h2>
+      <ol class="numbered">
+        {qualifications.map((q) => <li>{q}</li>)}
+      </ol>
+
+      <h2 class="block-title">活動費用</h2>
+      <p>団体活動を支えるため、団員には下記の費用負担をお願いしています。</p>
+      <dl class="fee">
+        <div>
+          <dt>団費</dt>
+          <dd>¥3,500 / 月</dd>
+        </div>
+        <div>
+          <dt>演奏会費</dt>
+          <dd>¥8,000 〜 ¥15,000 <small>（演奏会の内容により変動します）</small></dd>
+        </div>
+      </dl>
+
+      <h2 class="block-title">入団までの流れ</h2>
+      <ol class="flow">
+        {flow.map((f) => (
+          <li class="flow__item card">
+            <span class="flow__step">Step {f.step}</span>
+            <div>
+              <h3 class="flow__title">{f.title}</h3>
+              <p class="flow__text">{f.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <p class="cta-box">
+        <span>練習の見学をご希望の方は、お気軽にどうぞ</span>
+        <a href="/contact" class="btn btn--primary">見学・お問い合わせ</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .appeals { display: grid; gap: 20px; }
+  .appeal { padding: 28px 32px; }
+  .appeal__title {
+    margin: 0 0 12px;
+    font-size: 1.1rem;
+    color: var(--color-brand-700);
+    letter-spacing: 0.04em;
+  }
+  .appeal__text {
+    margin: 0;
+    color: var(--color-ink-2);
+    font-size: 0.95rem;
+    line-height: 1.95;
+  }
+
+  .block-title { margin-top: 56px; }
+  .bullet { padding-left: 1.2em; }
+  .bullet li { margin-bottom: 8px; }
+
+  .numbered { padding-left: 1.4em; }
+  .numbered li { margin-bottom: 10px; line-height: 1.85; }
+
+  .fee {
+    margin: 12px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .fee > div {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    padding: 14px 20px;
+    background: var(--color-bg-alt);
+    border-radius: var(--radius-md);
+    align-items: baseline;
+  }
+  .fee dt {
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    font-weight: 600;
+  }
+  .fee dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--color-ink);
+  }
+  .fee dd small {
+    font-family: var(--font-sans);
+    color: var(--color-muted);
+    font-size: 0.8rem;
+    margin-left: 8px;
+    font-weight: 400;
+  }
+
+  .flow {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0 32px;
+    display: grid;
+    gap: 16px;
+  }
+  .flow__item {
+    padding: 24px 28px;
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  .flow__step {
+    background: var(--color-brand-500);
+    color: #fff;
+    font-family: var(--font-accent);
+    letter-spacing: 0.14em;
+    text-align: center;
+    padding: 10px 6px;
+    border-radius: var(--radius-pill);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .flow__title {
+    margin: 0 0 6px;
+    font-size: 1.1rem;
+    color: var(--color-ink);
+    letter-spacing: 0.04em;
+  }
+  .flow__text {
+    margin: 0;
+    color: var(--color-ink-2);
+    font-size: 0.95rem;
+  }
+
+  .cta-box {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 40px 0 0;
+    padding: 28px 32px;
+    background: linear-gradient(135deg, var(--color-brand-50), var(--color-warm-50));
+    border: 1px solid var(--color-brand-100);
+    color: var(--color-ink);
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+  }
+
+  @media (max-width: 640px) {
+    .appeal { padding: 24px 22px; }
+    .fee > div { grid-template-columns: 1fr; gap: 4px; }
+  }
+  @media (max-width: 560px) {
+    .flow__item { grid-template-columns: 1fr; gap: 12px; padding: 22px; }
+    .flow__step { justify-self: start; padding: 8px 18px; }
+    .cta-box { flex-direction: column; align-items: stretch; text-align: center; padding: 24px; }
+  }
+</style>

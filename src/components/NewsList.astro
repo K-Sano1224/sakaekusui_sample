@@ -1,0 +1,40 @@
+---
+import type { News } from '../types';
+import NewsItem from './NewsItem.astro';
+
+type Props = {
+  items: News[];
+  limit?: number;
+  empty?: string;
+};
+
+const { items, limit, empty = '現在お知らせはありません。' } = Astro.props;
+
+const sorted = [...items].sort(
+  (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+);
+const visible = typeof limit === 'number' ? sorted.slice(0, limit) : sorted;
+---
+
+{visible.length === 0 ? (
+  <p class="news-list__empty">{empty}</p>
+) : (
+  <div class="card news-list">
+    {visible.map((n) => <NewsItem news={n} />)}
+  </div>
+)}
+
+<style>
+  .news-list {
+    padding: 8px 32px;
+  }
+  .news-list__empty {
+    text-align: center;
+    color: var(--color-muted);
+    padding: 48px 0;
+    font-size: 0.95rem;
+  }
+  @media (max-width: 640px) {
+    .news-list { padding: 8px 22px; }
+  }
+</style>

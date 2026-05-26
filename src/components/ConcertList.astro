@@ -1,0 +1,56 @@
+---
+import type { Concert } from '../types';
+import ConcertCard from './ConcertCard.astro';
+
+type Props = {
+  concerts: Concert[];
+  compact?: boolean;
+  /** true の場合、PCでも1カラム全幅で表示する */
+  full?: boolean;
+  empty?: string;
+};
+
+const { concerts, compact = false, full = false, empty = '現在掲載中の演奏会はありません。' } = Astro.props;
+---
+
+{concerts.length === 0 ? (
+  <p class="concert-list__empty">{empty}</p>
+) : (
+  <div class:list={['concert-list', full && 'concert-list--full']}>
+    {concerts.map((c) => <ConcertCard concert={c} compact={compact} />)}
+  </div>
+)}
+
+<style>
+  .concert-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    width: 100%;
+  }
+  .concert-list > :global(*) {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* デフォルト（fullなし）：PCで2カラム */
+  @media (min-width: 880px) {
+    .concert-list:not(.concert-list--full) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 32px;
+    }
+  }
+
+  /* full指定：常に1カラム全幅 */
+  .concert-list--full {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 28px;
+  }
+
+  .concert-list__empty {
+    text-align: center;
+    color: var(--color-muted);
+    padding: 48px 0;
+    font-size: 0.95rem;
+  }
+</style>

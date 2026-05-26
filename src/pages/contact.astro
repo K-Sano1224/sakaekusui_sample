@@ -1,0 +1,199 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { site } from '../data/site';
+---
+
+<BaseLayout
+  title="お問い合わせ"
+  description="演奏依頼・入団希望・取材など、各種お問い合わせはこちらから。"
+>
+  <PageHeader
+    eyebrow="Contact"
+    title="お問い合わせ"
+    lead="各種お問い合わせ・ご相談はこちらから。"
+  />
+
+  <section class="section">
+    <div class="container container--narrow">
+      <p class="lead-text">
+        以下のフォームよりお問い合わせください。<br />
+        毎週 <strong>木曜日まで</strong> にいただいたメールには、その週内に対応いたします。<br />
+        木曜日以降にいただいた場合は、翌週の対応となりますので、あらかじめご了承ください。
+      </p>
+
+      <form class="form card" name="contact" method="post" action="#" data-contact-form>
+        <div class="form__row">
+          <label for="name">お名前 <span class="required">必須</span></label>
+          <input id="name" name="name" type="text" required autocomplete="name" />
+        </div>
+
+        <div class="form__row">
+          <label for="email">メールアドレス <span class="required">必須</span></label>
+          <input id="email" name="email" type="email" required autocomplete="email" />
+        </div>
+
+        <div class="form__row">
+          <label for="category">お問い合わせ種別 <span class="required">必須</span></label>
+          <select id="category" name="category" required>
+            <option value="">選択してください</option>
+            <option value="join">入団・見学について</option>
+            <option value="performance">演奏依頼について</option>
+            <option value="media">取材依頼について</option>
+            <option value="concert">演奏会について</option>
+            <option value="other">その他</option>
+          </select>
+        </div>
+
+        <div class="form__row">
+          <label for="message">お問い合わせ内容 <span class="required">必須</span></label>
+          <textarea id="message" name="message" rows="8" required></textarea>
+        </div>
+
+        <div class="form__row form__row--check">
+          <label>
+            <input type="checkbox" name="privacy" required />
+            <span>個人情報の取り扱いに同意します</span>
+          </label>
+        </div>
+
+        <div class="form__actions">
+          <button type="submit" class="btn btn--primary">送信する</button>
+        </div>
+
+        <p class="form__note" data-form-note hidden>
+          ※ 現在このフォームはダミーです。実際の送信機能は後ほど実装します。<br />
+          お急ぎの方は <a href={`mailto:${site.email}`}>{site.email}</a> までご連絡ください。
+        </p>
+      </form>
+
+      <div class="contact-info card">
+        <span class="section-eyebrow contact-info__eyebrow">Direct</span>
+        <h2 class="contact-info__title">メールでのお問い合わせ</h2>
+        <p>
+          フォームをお使いいただけない場合は、以下のメールアドレスまでご連絡ください。
+        </p>
+        <p class="contact-info__email">
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+  const note = document.querySelector<HTMLElement>('[data-form-note]');
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (note) {
+      note.hidden = false;
+      note.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
+</script>
+
+<style>
+  .lead-text {
+    text-align: center;
+    color: var(--color-ink-2);
+    margin-bottom: 32px;
+  }
+
+  .form { padding: 40px; }
+  .form__row { margin-bottom: 22px; }
+  .form__row label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--color-ink);
+    font-size: 0.9rem;
+    letter-spacing: 0.02em;
+  }
+  .form__row input[type='text'],
+  .form__row input[type='email'],
+  .form__row select,
+  .form__row textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: 1rem;
+    background: #fff;
+    color: var(--color-ink);
+    transition: border-color 0.2s var(--easing-out), box-shadow 0.2s var(--easing-out);
+  }
+  .form__row input:focus,
+  .form__row select:focus,
+  .form__row textarea:focus {
+    outline: none;
+    border-color: var(--color-brand-500);
+    box-shadow: 0 0 0 4px rgba(19, 130, 185, 0.12);
+  }
+  .form__row textarea { resize: vertical; }
+
+  .form__row--check label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    color: var(--color-ink-2);
+    margin-bottom: 0;
+  }
+  .form__row--check input { transform: scale(1.15); accent-color: var(--color-brand-500); }
+
+  .required {
+    display: inline-block;
+    margin-left: 8px;
+    background: var(--color-danger);
+    color: #fff;
+    border-radius: var(--radius-sm);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    padding: 2px 8px;
+    font-weight: 600;
+    vertical-align: middle;
+  }
+
+  .form__actions {
+    text-align: center;
+    margin-top: 32px;
+  }
+  .form__actions .btn { min-width: 200px; }
+
+  .form__note {
+    margin-top: 18px;
+    padding: 16px 18px;
+    background: var(--color-brand-50);
+    border-left: 3px solid var(--color-brand-500);
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    color: var(--color-brand-900);
+  }
+
+  .contact-info {
+    margin-top: 48px;
+    padding: 32px;
+    text-align: center;
+  }
+  .contact-info__eyebrow { text-align: center; }
+  .contact-info__title {
+    margin: 4px 0 12px;
+    font-size: 1.15rem;
+  }
+  .contact-info p { margin: 0 0 8px; }
+  .contact-info__email {
+    margin-top: 12px !important;
+    font-family: var(--font-accent);
+    font-weight: 500;
+    font-size: 1.1rem;
+    letter-spacing: 0.04em;
+  }
+
+  @media (max-width: 560px) {
+    .form { padding: 28px 22px; }
+    .contact-info { padding: 28px 22px; }
+  }
+</style>

@@ -1,0 +1,317 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import ConcertList from '../components/ConcertList.astro';
+import RecruitmentStatus from '../components/RecruitmentStatus.astro';
+import ActivityList from '../components/ActivityList.astro';
+import NewsList from '../components/NewsList.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import { site } from '../data/site';
+import { getConcerts, splitConcertsByDate } from '../data/concerts';
+import { recruitment } from '../data/recruitment';
+import { activities } from '../data/activities';
+import { getNews } from '../data/news';
+
+const now = Date.now();
+const allConcerts = await getConcerts();
+const { upcoming: upcomingAll } = splitConcertsByDate(allConcerts);
+const upcomingConcerts = upcomingAll.slice(0, 2);
+
+const upcomingActivities = activities
+  .filter((a) => new Date(a.date).getTime() >= now)
+  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+  .slice(0, 5);
+
+const stats = site.stats;
+const news = await getNews();
+---
+
+<BaseLayout>
+  <Hero
+    title={'このまちに、\n音楽のある日常を。'}
+    subtitle="横浜栄区民吹奏楽団（愛称・栄区吹）は、2002年に発足した地域密着型のバンドです。栄区民の団員はもちろん、関東各県から集った仲間たちと、地元の方々に支えられながら活動しています。"
+    image={site.heroImage.url}
+    imageAlt={site.heroImage.alt}
+  >
+    <a href="/concerts" class="btn btn--primary">次回演奏会を見る</a>
+    <a href="/about" class="btn btn--outline">栄区吹について</a>
+    <SocialLinks slot="social" links={site.social} variant="light" />
+  </Hero>
+
+  <div id="main-content"></div>
+
+  <!-- INTRO -->
+  <section class="section intro">
+    <div class="container intro__inner">
+      <div class="intro__left">
+        <span class="section-eyebrow">About Us</span>
+        <h2 class="intro__title">
+          地元ファンとともに、<br />20年以上の音楽の歩み。
+        </h2>
+      </div>
+      <div class="intro__right">
+        <p>
+          {site.name}（愛称・{site.shortName}）は、2002年4月1日に発足しました。
+          もともと栄区で活動していた前身団体が栄区内で認知して頂けるようになってきたことをきっかけに、
+          新たな名称で再スタートを切った地域密着型のバンドです。
+        </p>
+        <p>
+          以降、栄区民の団員はもちろん、関東各県から集った団員たちによって、
+          地元の方々に支えられながら活動しています。
+          現在は <strong>{site.affiliation}</strong> に加盟しています。
+        </p>
+        <a href="/about" class="link-arrow">栄区吹についてもっと知る</a>
+      </div>
+    </div>
+
+    <div class="container">
+      <ul class="stats">
+        {stats.map((s) => (
+          <li class="stats__item">
+            <span class="stats__value">{s.value}</span>
+            <span class="stats__label">{s.label}</span>
+            <span class="stats__desc">{s.desc}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- NEXT CONCERT -->
+  <section class="section section--alt">
+    <div class="container">
+      <span class="section-eyebrow">Upcoming Concert</span>
+      <h2 class="section-title">次回の演奏会</h2>
+      <ConcertList
+        concerts={upcomingConcerts}
+        full
+        empty="次回演奏会の情報は随時更新いたします。決定次第、こちらでお知らせします。"
+      />
+      <p class="section-more">
+        <a href="/concerts" class="link-arrow">すべての演奏会を見る</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- NEWS + ACTIVITIES -->
+  <section class="section">
+    <div class="container two-col">
+      <div>
+        <span class="section-eyebrow">News</span>
+        <h2 class="two-col__title">お知らせ</h2>
+        <NewsList items={news} limit={4} />
+      </div>
+      <div>
+        <span class="section-eyebrow">Schedule</span>
+        <h2 class="two-col__title">活動予定</h2>
+        <ActivityList activities={upcomingActivities} />
+        <p class="two-col__more">
+          <a href="/activities" class="link-arrow">すべての活動予定</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- RECRUITMENT -->
+  <section class="section section--alt">
+    <div class="container">
+      <span class="section-eyebrow">Members Wanted</span>
+      <h2 class="section-title">団員募集</h2>
+      <RecruitmentStatus recruitment={recruitment} compact />
+      <p class="section-more">
+        <a href="/recruitment" class="link-arrow">詳細・見学のご案内</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <div class="container cta__inner">
+      <div class="cta__text">
+        <span class="section-eyebrow cta__eyebrow">Stay Connected</span>
+        <h2 class="cta__title">演奏会の最新情報を、いち早く。</h2>
+        <p class="cta__desc">定期演奏会の開催日・チケット発売情報などをメールでお届けします。</p>
+      </div>
+      <div class="cta__action">
+        <a href="/subscribe" class="btn btn--primary">案内通知に登録する</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* INTRO ---------------------------------------------------- */
+  .intro__inner {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 80px;
+    align-items: start;
+    margin-bottom: 80px;
+  }
+  .intro__title {
+    font-size: clamp(1.45rem, 2.3vw, 1.9rem);
+    line-height: 1.7;
+    margin: 8px 0 0;
+    letter-spacing: 0.06em;
+  }
+  .intro__right p {
+    color: var(--color-ink-2);
+    margin-bottom: 18px;
+    font-size: 1rem;
+    line-height: 1.95;
+  }
+
+  /* STATS ---------------------------------------------------- */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .stats__item {
+    text-align: center;
+    padding: 36px 16px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: transform 0.3s var(--easing-out), box-shadow 0.3s var(--easing-out);
+  }
+  .stats__item:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-sm);
+  }
+  .stats__value {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 3.6vw, 2.9rem);
+    font-weight: 700;
+    color: var(--color-brand-600);
+    line-height: 1;
+    letter-spacing: 0.04em;
+  }
+  .stats__label {
+    font-family: var(--font-accent);
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-size: 0.82rem;
+    color: var(--color-ink);
+    white-space: pre-line;
+    margin-top: 6px;
+  }
+  .stats__desc {
+    color: var(--color-muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+  }
+
+  /* TWO COLUMN ---------------------------------------------- */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+  .two-col__title {
+    text-align: left;
+    margin: 4px 0 24px;
+    letter-spacing: 0.04em;
+  }
+  .two-col .section-eyebrow { text-align: left; }
+  .two-col__more {
+    margin: 20px 0 0;
+    text-align: right;
+  }
+
+  /* SECTION MORE LINK --------------------------------------- */
+  .section-more {
+    text-align: center;
+    margin: 40px 0 0;
+  }
+
+  /* LINK ARROW ---------------------------------------------- */
+  .link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-brand-700);
+    font-weight: 600;
+    font-size: 0.92rem;
+    letter-spacing: 0.04em;
+    position: relative;
+    padding-bottom: 3px;
+  }
+  .link-arrow::after {
+    content: '→';
+    display: inline-block;
+    transition: transform 0.2s var(--easing-out);
+  }
+  .link-arrow:hover { color: var(--color-brand-900); text-decoration: none; }
+  .link-arrow:hover::after { transform: translateX(4px); }
+
+  /* CTA ----------------------------------------------------- */
+  .cta {
+    background: linear-gradient(135deg, var(--color-bg-soft) 0%, var(--color-warm-50) 100%);
+    color: var(--color-ink);
+    padding-block: clamp(64px, 9vw, 96px);
+    position: relative;
+    overflow: hidden;
+  }
+  .cta::before {
+    content: '';
+    position: absolute;
+    width: 320px; height: 320px;
+    background: rgba(19, 130, 185, 0.10);
+    border-radius: 50%;
+    filter: blur(60px);
+    top: -100px; right: -80px;
+    pointer-events: none;
+  }
+  .cta::after {
+    content: '';
+    position: absolute;
+    width: 280px; height: 280px;
+    background: rgba(251, 191, 36, 0.16);
+    border-radius: 50%;
+    filter: blur(60px);
+    bottom: -100px; left: -60px;
+    pointer-events: none;
+  }
+  .cta__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    position: relative;
+    z-index: 1;
+  }
+  .cta__eyebrow { color: var(--color-brand-600); text-align: left; }
+  .cta__title {
+    color: var(--color-ink);
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+    margin: 8px 0 6px;
+    letter-spacing: 0.06em;
+  }
+  .cta__desc {
+    color: var(--color-ink-2);
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  /* RESPONSIVE ---------------------------------------------- */
+  @media (max-width: 960px) {
+    .intro__inner { grid-template-columns: 1fr; gap: 32px; margin-bottom: 56px; }
+    .two-col { grid-template-columns: 1fr; gap: 56px; }
+    .stats__value { font-size: 2.2rem; }
+  }
+  @media (max-width: 560px) {
+    .stats { grid-template-columns: 1fr; gap: 14px; }
+    .stats__item { padding: 28px 16px; }
+    .cta__inner { flex-direction: column; align-items: flex-start; }
+  }
+</style>

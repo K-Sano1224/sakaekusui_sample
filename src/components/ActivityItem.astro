@@ -1,0 +1,109 @@
+---
+import type { Activity } from '../types';
+import { formatDateShort, formatDateJa } from '../lib/format';
+
+type Props = {
+  activity: Activity;
+  showFullDate?: boolean;
+};
+
+const { activity, showFullDate = false } = Astro.props;
+
+const typeLabel: Record<Activity['type'], string> = {
+  rehearsal: '練習',
+  concert: '本番',
+  event: 'イベント',
+  other: 'その他',
+};
+
+const typeClass: Record<Activity['type'], string> = {
+  rehearsal: 'activity__type--rehearsal',
+  concert: 'activity__type--concert',
+  event: 'activity__type--event',
+  other: 'activity__type--other',
+};
+---
+
+<li class="activity">
+  <div class="activity__date">
+    <time datetime={activity.date}>
+      {showFullDate ? formatDateJa(activity.date, { withWeekday: true }) : formatDateShort(activity.date)}
+    </time>
+  </div>
+  <div class="activity__body">
+    <p class="activity__head">
+      <span class={`activity__type ${typeClass[activity.type]}`}>{typeLabel[activity.type]}</span>
+      <span class="activity__title">{activity.title}</span>
+    </p>
+    <p class="activity__meta">
+      <span class="activity__location">{activity.location}</span>
+      {activity.description && (
+        <span class="activity__desc"> ／ {activity.description}</span>
+      )}
+    </p>
+  </div>
+</li>
+
+<style>
+  .activity {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 24px;
+    padding: 22px 4px;
+    border-bottom: 1px solid var(--color-line);
+    list-style: none;
+    transition: background 0.2s var(--easing-out);
+  }
+  .activity:hover { background: var(--color-bg-alt); }
+  .activity:last-child { border-bottom: none; }
+
+  .activity__date {
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.98rem;
+    letter-spacing: 0.04em;
+  }
+  .activity__head {
+    margin: 0 0 6px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+  .activity__type {
+    display: inline-block;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--color-line-2);
+    color: var(--color-muted);
+  }
+  .activity__type--rehearsal { background: var(--color-brand-50); color: var(--color-brand-700); }
+  .activity__type--concert   { background: var(--color-warm-100); color: #92400e; }
+  .activity__type--event     { background: var(--color-mint); color: #065f46; }
+
+  .activity__title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--color-ink);
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+  }
+  .activity__meta {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: 0.88rem;
+  }
+
+  @media (max-width: 640px) {
+    .activity {
+      grid-template-columns: 1fr;
+      gap: 6px;
+      padding: 18px 4px;
+    }
+    .activity__date { font-size: 0.85rem; }
+  }
+</style>

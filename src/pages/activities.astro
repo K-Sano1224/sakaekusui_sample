@@ -1,0 +1,81 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import ActivityList from '../components/ActivityList.astro';
+import { activities } from '../data/activities';
+
+const now = Date.now();
+
+const upcoming = activities
+  .filter((a) => new Date(a.date).getTime() >= now)
+  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+const grouped = upcoming.reduce<Record<string, typeof upcoming>>((acc, a) => {
+  const d = new Date(a.date);
+  const key = `${d.getFullYear()}年${d.getMonth() + 1}月`;
+  if (!acc[key]) acc[key] = [];
+  acc[key].push(a);
+  return acc;
+}, {});
+---
+
+<BaseLayout
+  title="活動予定"
+  description="練習・本番・イベント出演など、今後の活動予定をご案内します。"
+>
+  <PageHeader
+    eyebrow="Schedule"
+    title="活動予定"
+    lead="今後の練習日・本番・イベント出演などの予定をご案内します。"
+  />
+
+  <section class="section">
+    <div class="container container--narrow">
+      {Object.keys(grouped).length === 0 ? (
+        <p class="empty">直近の活動予定は調整中です。</p>
+      ) : (
+        Object.entries(grouped).map(([month, items]) => (
+          <div class="month-block">
+            <h2 class="month-block__title">{month}</h2>
+            <ActivityList activities={items} showFullDate />
+          </div>
+        ))
+      )}
+
+      <p class="note">
+        ※ 練習会場・日程は変更になる場合があります。最新情報はお問い合わせください。
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .month-block { margin-bottom: 56px; }
+  .month-block__title {
+    font-size: 1.25rem;
+    color: var(--color-ink);
+    margin: 0 0 20px;
+    padding-bottom: 10px;
+    position: relative;
+    letter-spacing: 0.06em;
+  }
+  .month-block__title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 32px;
+    height: 2px;
+    background: var(--color-brand-500);
+  }
+  .empty {
+    text-align: center;
+    color: var(--color-muted);
+    padding: 48px 0;
+  }
+  .note {
+    margin-top: 40px;
+    color: var(--color-muted);
+    font-size: 0.85rem;
+  }
+</style>

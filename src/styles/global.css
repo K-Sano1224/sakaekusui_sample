@@ -1,0 +1,340 @@
+/* =============================================================
+ * Design Tokens
+ *   Direction: friendly + warm + a little pop, while keeping
+ *              adult-band elegance. White & cream base.
+ *   Brand:     #1382b9
+ * ============================================================= */
+:root {
+  /* Brand blues */
+  --color-brand: #1382b9;
+  --color-brand-50:  #eaf5fb;
+  --color-brand-100: #d2eaf4;
+  --color-brand-200: #a4d5e9;
+  --color-brand-300: #76c0de;
+  --color-brand-400: #4fa3cd;
+  --color-brand-500: #1382b9;
+  --color-brand-600: #0e6a99;
+  --color-brand-700: #0a557b;
+
+  /* Warm accents — soft, friendly, never childish */
+  --color-warm-50:  #fef9f0;
+  --color-warm-100: #fef3c7;
+  --color-warm-200: #fde68a;
+  --color-warm-300: #fcd34d;
+  --color-warm-400: #fbbf24;
+  --color-warm-500: #f59e0b;
+  --color-peach:    #fed7aa;
+  --color-mint:     #d1fae5;
+
+  /* Neutrals — slightly warmer than slate */
+  --color-ink:    #1f2a3a;
+  --color-ink-2:  #475467;
+  --color-muted:  #667085;
+  --color-muted-2:#98a2b3;
+  --color-line:   #eaecf0;
+  --color-line-2: #f4f6f8;
+
+  /* Backgrounds — warm whites */
+  --color-bg:      #ffffff;
+  --color-bg-alt:  #fbf8f3;   /* warm cream */
+  --color-bg-soft: #f4faff;   /* very light blue */
+
+  /* Status */
+  --color-success: #047857;
+  --color-warning: #b45309;
+  --color-danger:  #b91c1c;
+
+  /* Radius — more rounded for friendliness */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-pill: 999px;
+
+  /* Soft shadows — tinted with brand for warmth */
+  --shadow-xs: 0 1px 3px  rgba(31, 42, 58, 0.04);
+  --shadow-sm: 0 4px 14px rgba(19, 130, 185, 0.06);
+  --shadow-md: 0 10px 30px rgba(19, 130, 185, 0.09);
+  --shadow-lg: 0 24px 56px rgba(19, 130, 185, 0.12);
+
+  /* Layout */
+  --container: 1200px;
+  --container-narrow: 880px;
+  --header-h: 96px;
+
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+
+  /* Typography */
+  --font-sans: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+  --font-display: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN',
+    'Hiragino Sans', sans-serif;
+  --font-accent: 'Quicksand', 'Avenir Next', sans-serif;
+
+  /* Easing — gentle */
+  --easing-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* =============================================================
+ * Base
+ * ============================================================= */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+html, body { margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background-color: var(--color-bg);
+  line-height: 1.85;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+img, svg, video { max-width: 100%; height: auto; display: block; }
+
+a {
+  color: var(--color-brand-600);
+  text-decoration: none;
+  transition: color 0.2s var(--easing-out);
+}
+a:hover { color: var(--color-brand-700); }
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--color-ink);
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  margin: 0 0 var(--space-4);
+}
+h1 { font-size: clamp(1.6rem, 2.4vw, 2.2rem); }
+h2 { font-size: clamp(1.35rem, 1.8vw, 1.7rem); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; }
+
+p { margin: 0 0 1em; }
+ul, ol { padding-left: 1.4em; margin: 0 0 1em; }
+
+::selection { background: var(--color-brand-100); color: var(--color-brand-700); }
+
+:focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* =============================================================
+ * Layout helpers
+ * ============================================================= */
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+.container--narrow { max-width: var(--container-narrow); }
+
+.section {
+  padding-block: clamp(64px, 9vw, 104px);
+}
+.section--alt {
+  background-color: var(--color-bg-alt);
+}
+.section--soft {
+  background-color: var(--color-bg-soft);
+}
+
+.section-eyebrow {
+  display: block;
+  text-align: center;
+  font-family: var(--font-accent);
+  font-weight: 500;
+  font-size: 0.95rem;
+  letter-spacing: 0.18em;
+  color: var(--color-brand-500);
+  margin: 0 0 var(--space-2);
+  text-transform: uppercase;
+}
+.section-title {
+  text-align: center;
+  margin: 0 0 var(--space-7);
+  letter-spacing: 0.06em;
+}
+.section-title::after {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 4px;
+  background: var(--color-warm-300);
+  margin: var(--space-4) auto 0;
+  border-radius: var(--radius-pill);
+}
+
+/* =============================================================
+ * Buttons — softer, friendlier
+ * ============================================================= */
+.btn {
+  --btn-bg: var(--color-brand-500);
+  --btn-color: #fff;
+  --btn-border: transparent;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background: var(--btn-bg);
+  color: var(--btn-color);
+  border: 1.5px solid var(--btn-border);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    transform 0.3s var(--easing-out),
+    box-shadow 0.3s var(--easing-out),
+    background 0.2s var(--easing-out),
+    color 0.2s var(--easing-out),
+    border-color 0.2s var(--easing-out);
+  box-shadow: 0 2px 0 rgba(31, 42, 58, 0.04);
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(19, 130, 185, 0.18);
+  text-decoration: none;
+}
+.btn:active { transform: translateY(-1px); }
+
+.btn--primary { --btn-bg: var(--color-brand-500); --btn-color: #fff; }
+.btn--primary:hover { --btn-bg: var(--color-brand-600); color: #fff; }
+
+.btn--warm {
+  --btn-bg: var(--color-warm-300);
+  --btn-color: #6b3a06;
+}
+.btn--warm:hover { --btn-bg: var(--color-warm-400); color: #6b3a06; }
+
+.btn--outline {
+  --btn-bg: #fff;
+  --btn-color: var(--color-brand-600);
+  --btn-border: var(--color-brand-200);
+  box-shadow: 0 2px 0 rgba(31, 42, 58, 0.03);
+}
+.btn--outline:hover {
+  --btn-bg: var(--color-brand-50);
+  color: var(--color-brand-700);
+  --btn-border: var(--color-brand-300);
+}
+
+.btn--ghost {
+  --btn-bg: transparent;
+  --btn-color: var(--color-brand-700);
+  --btn-border: transparent;
+  box-shadow: none;
+}
+.btn--ghost:hover {
+  --btn-bg: var(--color-brand-50);
+  color: var(--color-brand-700);
+}
+
+.btn--sm { padding: 10px 20px; font-size: 0.85rem; }
+
+/* =============================================================
+ * Badges
+ * ============================================================= */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.6;
+}
+.badge--brand   { background: var(--color-brand-50);  color: var(--color-brand-700); }
+.badge--success { background: var(--color-mint);      color: #065f46; }
+.badge--warm    { background: var(--color-warm-100);  color: #92400e; }
+.badge--peach   { background: var(--color-peach);     color: #9a3412; }
+.badge--muted   { background: var(--color-line-2);    color: #475467; }
+.badge--outline {
+  background: #fff;
+  color: var(--color-brand-700);
+  border: 1.5px solid var(--color-brand-200);
+}
+
+/* =============================================================
+ * Card primitive — softer
+ * ============================================================= */
+.card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+  transition:
+    transform 0.4s var(--easing-out),
+    box-shadow 0.4s var(--easing-out),
+    border-color 0.3s var(--easing-out);
+}
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-brand-100);
+}
+
+/* =============================================================
+ * Skip link
+ * ============================================================= */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 12px;
+  background: var(--color-brand-500);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  z-index: 100;
+  font-size: 0.9rem;
+}
+.skip-link:focus { top: 12px; }
+
+/* =============================================================
+ * Soft fade-in (controlled by IntersectionObserver if desired)
+ * ============================================================= */
+@media (prefers-reduced-motion: no-preference) {
+  .fade-in {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: fadeIn 0.8s var(--easing-out) forwards;
+  }
+}
+@keyframes fadeIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* =============================================================
+ * Mobile tweaks
+ * ============================================================= */
+@media (max-width: 640px) {
+  .container { padding-inline: 20px; }
+  .section-title { margin-bottom: var(--space-5); }
+}

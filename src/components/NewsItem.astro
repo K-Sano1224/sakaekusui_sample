@@ -1,0 +1,84 @@
+---
+import type { News } from '../types';
+import { formatDateJa } from '../lib/format';
+
+type Props = {
+  news: News;
+};
+
+const { news } = Astro.props;
+
+const categoryClass: Record<News['category'], string> = {
+  concert: 'badge--warm',
+  recruitment: 'badge--success',
+  media: 'badge--brand',
+  other: 'badge--muted',
+};
+---
+
+<article class="news-item">
+  <header class="news-item__head">
+    <time class="news-item__date" datetime={news.date}>{formatDateJa(news.date)}</time>
+    <span class={`badge ${categoryClass[news.category]}`}>{news.categoryLabel}</span>
+  </header>
+  <h3 class="news-item__title">
+    {news.link ? (
+      <a href={news.link}>
+        {news.title}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    ) : news.title}
+  </h3>
+  <p class="news-item__body">{news.body}</p>
+</article>
+
+<style>
+  .news-item {
+    padding: 24px 0;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .news-item:last-child { border-bottom: none; }
+  .news-item__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .news-item__date {
+    font-size: 0.8rem;
+    color: var(--color-muted);
+    font-family: var(--font-accent);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+  }
+  .news-item__title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin: 0 0 8px;
+    color: var(--color-ink);
+    letter-spacing: 0.02em;
+  }
+  .news-item__title a {
+    color: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s var(--easing-out);
+  }
+  .news-item__title a:hover { color: var(--color-brand-600); text-decoration: none; }
+  .news-item__title a svg {
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity 0.2s var(--easing-out), transform 0.2s var(--easing-out);
+  }
+  .news-item__title a:hover svg { opacity: 1; transform: translateX(0); }
+
+  .news-item__body {
+    margin: 0;
+    color: var(--color-ink-2);
+    font-size: 0.92rem;
+  }
+</style>

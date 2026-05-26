@@ -1,0 +1,349 @@
+---
+import type { Concert } from '../types';
+import { formatDateJa } from '../lib/format';
+
+type Props = {
+  concert: Concert;
+  compact?: boolean;
+};
+
+const { concert, compact = false } = Astro.props;
+
+const statusLabel: Record<Concert['status'], string> = {
+  upcoming: '開催予定',
+  soldout: '完売',
+  finished: '終了',
+};
+
+const statusClass: Record<Concert['status'], string> = {
+  upcoming: 'badge--brand',
+  soldout: 'badge--peach',
+  finished: 'badge--muted',
+};
+
+const d = new Date(concert.date);
+const monthEn = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+const month = Number.isNaN(d.getTime()) ? '' : monthEn[d.getMonth()];
+const day = Number.isNaN(d.getTime()) ? '' : String(d.getDate()).padStart(2, '0');
+const year = Number.isNaN(d.getTime()) ? '' : d.getFullYear();
+
+const detailUrl = `/concerts/${concert.id}`;
+/** 次回演奏会かつチラシあり → カード右にプレビュー */
+const showFlyerPreview =
+  !compact && concert.status === 'upcoming' && Boolean(concert.flyer?.url);
+---
+
+<a
+  href={detailUrl}
+  class:list={['concert-card-link', compact && 'concert-card-link--compact']}
+  aria-label={`${concert.title} の詳細を見る`}
+>
+  <article
+    class:list={[
+      'card',
+      'concert-card',
+      compact && 'concert-card--compact',
+      showFlyerPreview && 'concert-card--with-flyer',
+    ]}
+  >
+    <div class="concert-card__date" aria-hidden="true">
+      <span class="concert-card__day">{day}</span>
+      <span class="concert-card__month">{month}</span>
+      <span class="concert-card__year">{year}</span>
+    </div>
+
+    <div class="concert-card__body">
+      <header class="concert-card__head">
+        <span class={`badge ${statusClass[concert.status]}`}>{statusLabel[concert.status]}</span>
+        <time class="concert-card__date-text" datetime={concert.date}>
+          {formatDateJa(concert.date, { withWeekday: true })}
+        </time>
+      </header>
+
+      <h3 class="concert-card__title">{concert.title}</h3>
+
+      <dl class="concert-card__meta">
+        {(concert.openTime || concert.startTime) && (
+          <div>
+            <dt>時間</dt>
+            <dd>
+              {concert.openTime && <>開場 {concert.openTime}</>}
+              {concert.openTime && concert.startTime && ' / '}
+              {concert.startTime && <>開演 {concert.startTime}</>}
+            </dd>
+          </div>
+        )}
+        <div>
+          <dt>会場</dt>
+          <dd>
+            {concert.venue}
+            {concert.address && <span class="concert-card__address">（{concert.address}）</span>}
+          </dd>
+        </div>
+        <div>
+          <dt>料金</dt>
+          <dd>{concert.fee}</dd>
+        </div>
+      </dl>
+
+      <div class="concert-card__action">
+        <span class="concert-card__cta">
+          詳細を見る
+        </span>
+      </div>
+    </div>
+
+    {showFlyerPreview && concert.flyer && (
+      <div class="concert-card__flyer" aria-hidden="true">
+        <img
+          src={concert.flyer.url}
+          alt=""
+          width={concert.flyer.width}
+          height={concert.flyer.height}
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    )}
+  </article>
+</a>
+
+<style>
+  .concert-card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border-radius: var(--radius-lg);
+    transition: transform 0.3s var(--easing-out), box-shadow 0.3s var(--easing-out);
+  }
+  .concert-card-link:hover {
+    text-decoration: none;
+    transform: translateY(-4px);
+  }
+  .concert-card-link:hover .concert-card {
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-brand-200);
+  }
+  .concert-card-link:hover .concert-card__title {
+    color: var(--color-brand-700);
+  }
+  .concert-card-link:hover .concert-card__cta {
+    color: var(--color-brand-700);
+    gap: 10px;
+  }
+  .concert-card-link:focus-visible {
+    outline: 3px solid var(--color-brand-300);
+    outline-offset: 4px;
+  }
+
+  .concert-card {
+    display: grid;
+    grid-template-columns: 128px 1fr;
+    overflow: hidden;
+    background: #fff;
+    transition: box-shadow 0.3s var(--easing-out), border-color 0.3s var(--easing-out);
+  }
+  .concert-card--with-flyer {
+    grid-template-columns: 128px 1fr minmax(100px, 148px);
+  }
+  .concert-card--compact {
+    grid-template-columns: 96px 1fr;
+  }
+
+  .concert-card__date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 28px 12px;
+    background: linear-gradient(165deg, var(--color-brand-50) 0%, var(--color-warm-50) 100%);
+    color: var(--color-brand-700);
+    text-align: center;
+    position: relative;
+  }
+  .concert-card__date::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 16%;
+    bottom: 16%;
+    width: 1px;
+    background: linear-gradient(transparent, var(--color-brand-100), transparent);
+  }
+  .concert-card--with-flyer .concert-card__date::after {
+    display: none;
+  }
+  .concert-card__day {
+    font-family: var(--font-display);
+    font-size: 2.3rem;
+    line-height: 1;
+    font-weight: 700;
+    color: var(--color-ink);
+    letter-spacing: 0.02em;
+  }
+  .concert-card__month {
+    font-family: var(--font-accent);
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    font-size: 0.8rem;
+    color: var(--color-brand-600);
+    margin-top: 4px;
+  }
+  .concert-card__year {
+    font-family: var(--font-accent);
+    font-weight: 500;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    color: var(--color-muted);
+  }
+
+  .concert-card__body {
+    padding: 28px 28px 28px 30px;
+    border-right: 1px solid var(--color-line);
+  }
+  .concert-card:not(.concert-card--with-flyer) .concert-card__body {
+    border-right: none;
+  }
+  .concert-card--compact .concert-card__body {
+    padding: 22px 22px 22px 24px;
+    border-right: none;
+  }
+
+  .concert-card__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .concert-card__date-text {
+    color: var(--color-muted);
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+  }
+
+  .concert-card__title {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 16px;
+    color: var(--color-ink);
+    letter-spacing: 0.04em;
+    transition: color 0.2s var(--easing-out);
+  }
+
+  .concert-card__meta {
+    display: grid;
+    gap: 4px;
+    margin: 0 0 16px;
+  }
+  .concert-card__meta > div {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 12px;
+    font-size: 0.9rem;
+    padding: 6px 0;
+    border-bottom: 1px dashed var(--color-line);
+  }
+  .concert-card__meta > div:last-child { border-bottom: none; }
+  .concert-card__meta dt {
+    color: var(--color-muted);
+    font-weight: 500;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding-top: 2px;
+  }
+  .concert-card__meta dd { margin: 0; color: var(--color-ink); }
+  .concert-card__address {
+    color: var(--color-muted);
+    font-size: 0.82rem;
+    margin-left: 4px;
+  }
+
+  .concert-card__action {
+    margin: 0;
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 4px;
+  }
+  .concert-card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-accent);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--color-brand-600);
+    transition: color 0.2s var(--easing-out), gap 0.2s var(--easing-out);
+  }
+
+  /* チラシプレビュー（次回演奏会のみ・カード右） */
+  .concert-card__flyer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 14px;
+    background: linear-gradient(180deg, var(--color-bg-soft) 0%, #fff 100%);
+  }
+  .concert-card__flyer img {
+    display: block;
+    width: 100%;
+    max-width: 120px;
+    height: auto;
+    max-height: 168px;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s var(--easing-out), box-shadow 0.3s var(--easing-out);
+  }
+  .concert-card-link:hover .concert-card__flyer img {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-md);
+  }
+  .concert-card__flyer-label {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-family: var(--font-accent);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-brand-700);
+    background: rgba(255, 255, 255, 0.92);
+    padding: 3px 8px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-brand-100);
+  }
+
+  @media (max-width: 720px) {
+    .concert-card--with-flyer {
+      grid-template-columns: 88px 1fr;
+      grid-template-rows: auto auto;
+    }
+    .concert-card--with-flyer .concert-card__body {
+      border-right: none;
+      border-bottom: 1px solid var(--color-line);
+    }
+    .concert-card--with-flyer .concert-card__flyer {
+      grid-column: 1 / -1;
+      padding: 20px;
+    }
+    .concert-card--with-flyer .concert-card__flyer img {
+      max-width: 160px;
+      max-height: 220px;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .concert-card { grid-template-columns: 88px 1fr; }
+    .concert-card__date { padding: 20px 8px; }
+    .concert-card__day { font-size: 1.7rem; }
+    .concert-card__body { padding: 22px; }
+    .concert-card__meta > div { grid-template-columns: 56px 1fr; gap: 8px; }
+  }
+</style>

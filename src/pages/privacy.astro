@@ -1,0 +1,261 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { site } from '../data/site';
+
+const lastUpdated = '2026年5月26日';
+
+const sections = [
+  {
+    id: 'collect',
+    no: '01',
+    title: '取得する個人情報の範囲',
+    body: [
+      `${site.name}（以下「当団」といいます）では、お問い合わせフォーム、または演奏会の案内通知の登録時に、ご連絡先としてメールアドレスを取得する場合があります。`,
+      'ご住所・お名前・電話番号などをこちらから一律にお伺いすることはありません。お客様ご自身がメッセージ本文に任意で記載された情報のみを取り扱います。',
+    ],
+  },
+  {
+    id: 'purpose',
+    no: '02',
+    title: '利用目的',
+    body: [
+      '取得した個人情報は、以下の目的の範囲内でのみ利用します。',
+    ],
+    list: [
+      '演奏会のご案内・告知メールの送付',
+      'お問い合わせへの回答・ご返信',
+      '上記の目的を達成するために必要な事務連絡',
+    ],
+  },
+  {
+    id: 'manage',
+    no: '03',
+    title: '個人情報の管理',
+    body: [
+      '当団は、お預かりした個人情報の漏洩・滅失・毀損などを防止するため、適切な安全管理措置を講じます。',
+      '個人情報の取り扱いについては、関連する法令・ガイドラインを遵守します。',
+    ],
+  },
+  {
+    id: 'third-party',
+    no: '04',
+    title: '第三者への提供',
+    body: [
+      '当団は、次のいずれかに該当する場合を除き、ご本人の同意なく第三者に個人情報を提供することはありません。',
+    ],
+    list: [
+      '法令にもとづく開示の請求があった場合',
+      '人の生命・身体・財産の保護のために必要があり、ご本人の同意を得ることが困難な場合',
+    ],
+  },
+  {
+    id: 'rights',
+    no: '05',
+    title: '開示・訂正・削除のご請求',
+    body: [
+      '当団が保有する個人情報について、ご本人から開示・訂正・追加・削除・利用停止のご請求があった場合は、ご本人であることを確認のうえ、合理的な期間内に対応いたします。',
+    ],
+  },
+  {
+    id: 'updates',
+    no: '06',
+    title: '本ポリシーの変更',
+    body: [
+      '当団は、必要に応じて本プライバシーポリシーの内容を見直し、改善に努めます。',
+      '変更後のプライバシーポリシーは、本ページに掲示した時点から効力を生じます。',
+    ],
+  },
+  {
+    id: 'contact',
+    no: '07',
+    title: 'お問い合わせ窓口',
+    body: [
+      '本ポリシーおよび個人情報の取り扱いに関するお問い合わせは、下記の窓口までお願いいたします。',
+    ],
+    contact: true,
+  },
+];
+---
+
+<BaseLayout title="プライバシーポリシー">
+  <PageHeader
+    eyebrow="Privacy Policy"
+    title="プライバシーポリシー"
+    lead="当サイトをご利用いただくにあたり、個人情報の取り扱いについて、以下のとおり定めています。"
+  />
+
+  <section class="section">
+    <div class="container container--narrow">
+      <p class="updated">最終更新日：{lastUpdated}</p>
+
+      <ol class="policy">
+        {sections.map((s) => (
+          <li id={s.id} class="policy__item">
+            <div class="policy__no" aria-hidden="true">{s.no}</div>
+            <div class="policy__body">
+              <h2 class="policy__title">{s.title}</h2>
+              {s.body.map((p) => <p>{p}</p>)}
+              {s.list && (
+                <ul class="policy__list">
+                  {s.list.map((li) => <li>{li}</li>)}
+                </ul>
+              )}
+              {s.contact && (
+                <div class="policy__contact">
+                  <dl>
+                    <div>
+                      <dt>団体名</dt>
+                      <dd>{site.name}</dd>
+                    </div>
+                    <div>
+                      <dt>連絡先</dt>
+                      <dd>
+                        <a href={`mailto:${site.email}`}>{site.email}</a>
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .updated {
+    text-align: right;
+    color: var(--color-muted);
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    margin: 0 0 32px;
+  }
+
+  .policy {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .policy__item {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 32px;
+    background: #fff;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    padding: 36px 40px;
+    box-shadow: var(--shadow-xs);
+    transition: border-color 0.25s var(--easing-out), box-shadow 0.25s var(--easing-out);
+  }
+  .policy__item:hover {
+    border-color: var(--color-brand-200);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .policy__no {
+    font-family: var(--font-accent);
+    font-weight: 700;
+    font-size: 2.2rem;
+    line-height: 1;
+    color: var(--color-brand-500);
+    letter-spacing: 0.08em;
+    padding: 8px 20px 0 0;
+    border-right: 1px dashed var(--color-line);
+  }
+
+  .policy__body { min-width: 0; }
+  /* h2 を global の section-title 相当のサイズに揃える */
+  .policy__title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--color-ink);
+    font-size: clamp(1.25rem, 1.6vw, 1.5rem);
+    line-height: 1.55;
+    margin: 0 0 18px;
+    letter-spacing: 0.05em;
+  }
+  .policy__body p {
+    color: var(--color-ink-2);
+    font-size: 1rem;
+    line-height: 1.95;
+    margin: 0 0 14px;
+  }
+  .policy__body p:last-of-type { margin-bottom: 0; }
+
+  .policy__list {
+    margin: 14px 0 0;
+    padding-left: 1.4em;
+    color: var(--color-ink-2);
+    font-size: 1rem;
+    line-height: 1.95;
+  }
+  .policy__list li { margin-bottom: 6px; }
+
+  .policy__contact {
+    margin-top: 22px;
+    padding: 22px 26px;
+    background: var(--color-bg-alt);
+    border-radius: var(--radius-md);
+  }
+  .policy__contact dl {
+    margin: 0;
+    display: grid;
+    gap: 12px;
+  }
+  .policy__contact > dl > div {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 18px;
+    font-size: 1rem;
+    align-items: baseline;
+  }
+  .policy__contact dt {
+    color: var(--color-muted);
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding-top: 2px;
+    font-weight: 500;
+  }
+  .policy__contact dd {
+    margin: 0;
+    color: var(--color-ink);
+  }
+  .policy__contact a {
+    color: var(--color-brand-700);
+    border-bottom: 1.5px dotted var(--color-brand-200);
+    padding-bottom: 1px;
+  }
+  .policy__contact a:hover {
+    color: var(--color-brand-700);
+    border-color: var(--color-brand-500);
+  }
+
+  @media (max-width: 640px) {
+    .policy__item {
+      grid-template-columns: 1fr;
+      padding: 28px 24px;
+      gap: 18px;
+    }
+    .policy__no {
+      border-right: none;
+      border-bottom: 1px dashed var(--color-line);
+      padding: 0 0 14px;
+      font-size: 1.8rem;
+    }
+    .policy__title {
+      font-size: 1.2rem;
+    }
+    .policy__contact > dl > div {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+  }
+</style>
