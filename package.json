@@ -12,7 +12,7 @@
     "pages:deploy": "npm run build && wrangler pages deploy dist --project-name=sakaekusui"
   },
   "engines": {
-    "node": ">=20"
+    "node": "22.x"
   },
   "dependencies": {
     "astro": "^6.3.4"
