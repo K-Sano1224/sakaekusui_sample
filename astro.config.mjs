@@ -1,7 +1,7 @@
 import { defineConfig, envField } from 'astro/config';
 
 /** デプロイ先の URL（Vercel / Cloudflare Pages / 手動指定） */
-function resolveSiteUrl(): string {
+function resolveSiteUrl() {
   if (process.env.SITE_URL) return process.env.SITE_URL;
   if (process.env.VERCEL_URL) {
     const u = process.env.VERCEL_URL;
