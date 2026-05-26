@@ -1,9 +1,19 @@
 import { defineConfig, envField } from 'astro/config';
 
+/** デプロイ先の URL（Vercel / Cloudflare Pages / 手動指定） */
+function resolveSiteUrl(): string {
+  if (process.env.SITE_URL) return process.env.SITE_URL;
+  if (process.env.VERCEL_URL) {
+    const u = process.env.VERCEL_URL;
+    return u.startsWith('http') ? u : `https://${u}`;
+  }
+  if (process.env.CF_PAGES_URL) return process.env.CF_PAGES_URL;
+  return 'https://example.com';
+}
+
 // https://astro.build/config
 export default defineConfig({
-  // Cloudflare Pages ビルド時は CF_PAGES_URL が自動設定される
-  site: process.env.SITE_URL || process.env.CF_PAGES_URL || 'https://example.com',
+  site: resolveSiteUrl(),
   output: 'static',
   /** ポートが使用中のとき別ポートに逃げずエラーにする（古い dev サーバーに繋ぎ続ける事故を防ぐ） */
   server: { port: 4321, strictPort: true },

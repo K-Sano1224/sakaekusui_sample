@@ -64,14 +64,15 @@ npm run build    # 静的サイトを dist/ に出力
 npm run preview  # ビルド結果をローカルプレビュー
 ```
 
-## Cloudflare Pages で仮公開
+## Vercel で仮公開
 
-詳細は [docs/cloudflare-pages.md](./docs/cloudflare-pages.md) を参照してください。
+詳細は [docs/vercel.md](./docs/vercel.md) を参照してください。
 
-- ビルドコマンド: `npm run build`
-- 出力ディレクトリ: `dist`
-- 必須の環境変数: `MICROCMS_SERVICE_DOMAIN`, `MICROCMS_API_KEY`
-- CLI デプロイ: `npm run pages:deploy`（要 `npx wrangler login`）
+1. [Vercel](https://vercel.com/) → **Add Project** → GitHub リポジトリを Import
+2. 環境変数: `MICROCMS_SERVICE_DOMAIN`, `MICROCMS_API_KEY`
+3. **Deploy** → `https://<プロジェクト名>.vercel.app` で公開
+
+（Cloudflare Pages を使う場合は [docs/cloudflare-pages.md](./docs/cloudflare-pages.md)）
 
 ## microCMS 連携の方針
 
